@@ -43,7 +43,7 @@ export default{
     return {
       list: [],
       number: -1,
-      lshow: false
+      lshow: false     //  true表示搜索页面，false表示显示页面
     };
   },
   methods: {

@@ -26,6 +26,7 @@ export default {
   methods: {
     showsong(item) {
       console.log(11);
+      console.log('---',item)
       this.$refs.menu.show(item);
     },
     move: function (val) {

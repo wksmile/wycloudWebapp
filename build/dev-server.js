@@ -16,7 +16,7 @@ var proxyTable = config.dev.proxyTable
 
 var app = express()
 
-
+// 根据key值 search 查询搜索结果
 app.get('/key/:key', function (req, res) {
   var seller = {
     name: req.params.key
@@ -33,6 +33,7 @@ app.get('/key/:key', function (req, res) {
     }
   });
 });
+//  更具id的值查询歌曲详情
 app.get('/detail/:key', function (req, res) {
   var seller = {
     name: req.params.key
