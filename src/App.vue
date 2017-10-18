@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header>
-      <musicsearch v-on:musicsearch="showsong" v-on:openmusicsong="showsong"></musicsearch>
+      <music-head v-on:musicsearch="showsong" v-on:openmusicsong="showsong"></music-head>
       <ul>
         <li class="head-li" @click="move('/')">个性推荐</li>
         <li class="head-li" @click="move('/music')">歌单</li>
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import musicsearch from './components/musicsearch/musicsearch';
+import MusicHead from './components/MusicHead';
 export default {
   data() {
     return {
@@ -26,7 +26,7 @@ export default {
   methods: {
     showsong(item) {
       console.log(11);
-      console.log('---',item)
+      console.log('---', item);
       this.$refs.menu.show(item);
     },
     move: function (val) {
@@ -47,7 +47,7 @@ export default {
     }
   },
   components: {
-    musicsearch
+    MusicHead
   }
 };
 </script>

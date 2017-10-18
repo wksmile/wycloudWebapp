@@ -15,7 +15,7 @@ import '../static/css/reset.css';
 import 'vue-swipe/dist/vue-swipe.css';
 import VueLazyload from 'vue-lazyload';
 
-NProgress.inc(0.2);
+NProgress.inc(0.2);             //  设置进度条
 NProgress.configure({ easing: 'ease', speed: 500, showSpinner: false });
 
 Vue.use(VueLazyload, {

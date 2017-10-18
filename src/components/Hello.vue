@@ -93,7 +93,7 @@
 //      this.music = data.music;
     },
     methods: {
-      get() {
+      get() {      //  获取歌单列表
         this.$http.get(api.getPlayListByWhere('全部', 'hot', 0, true, 9)).then((res) => {
           this.music = res.data.playlists;
           this.$nextTick(() => {
