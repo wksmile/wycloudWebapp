@@ -2,13 +2,13 @@
   <div>
     <div class="search">
       <div class="yuyin"></div>         <!--左侧图标-->
-      <div class="top-header">                  <!--头部三个标志 -->
+      <div class="top-header">          <!--头部三个标志-->
         <span><img src="../../../static/img/music1.png"></span>
         <span><img src="../../../static/img/music2.png"></span>
         <span><img src="../../../static/img/People.png"></span>
       </div>
-      <div class="music"  @click="hidelist">   <!--右侧图标-->
-        <span v-show="lshow">取消</span>
+      <div class="music">   <!--右侧图标-->
+        <span v-show="lshow" @click="hidelist">取消</span>
         <img src="../../../static/img/search.png" alt="" v-show="!lshow" @click="showlist">
       </div>
     </div>

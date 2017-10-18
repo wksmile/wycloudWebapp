@@ -4,10 +4,8 @@ import Vue from 'vue';
 import App from './App';
 import Axios from './utils/axios';
 import Router from 'vue-router';
-import Music from './components/Music';
-import Rank from './components/Rank';
-import Station from './components/Station';
-import Index from './components/Index';
+import routes from './router';
+import store from './store';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 
@@ -25,24 +23,12 @@ Vue.use(VueLazyload, {
   attempt: 1,
   listenEvents: [ 'scroll', 'mousewheel' ]
 });
-Vue.use(Router);
 
-const routes = [{
-  path: '/',
-  component: Index
-}, {
-  path: '/music',
-  component: Music
-}, {
-  path: '/station',
-  component: Station
-}, {
-  path: '/rank',
-  component: Rank
-}];
+Vue.use(Router);
 
 const router = new Router({
   linkActiveClass: 'active',
+  mode: 'history',
   routes
 });
 
@@ -61,5 +47,6 @@ Vue.prototype.$http = Axios;
 new Vue({
   el: '#app',
   router,
+  store,
   render: h => h(App)
 });

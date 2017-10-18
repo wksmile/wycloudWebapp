@@ -1,17 +1,21 @@
-import Vue from 'vue'
-import Router from 'vue-router'
-import APP from '../App'
+import Music from '../components/Music';
+import Rank from '../components/Rank';
+import Station from '../components/Station';
+import Index from '../components/Index';
 
-Vue.use(Router)
-
-export default new Router({
-  mode: 'history',
-  routes: [
-    {
-      path: '/',
-      name: 'App',
-      component: App
-    }
-  ]
-})
+export default [
+  {
+    path: '/',
+    component: Index
+  }, {
+    path: '/music',
+    component: Music
+  }, {
+    path: '/station',
+    component: Station
+  }, {
+    path: '/rank',
+    component: Rank
+  }
+];
 
