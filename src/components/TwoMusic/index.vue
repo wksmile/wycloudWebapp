@@ -1,16 +1,77 @@
 <template>
-  <div style="width: 100%;height: 100%;">
-    <header>
-      <ul>
-        <li class="head-li" @click="move('/')" v-bind:class="[tagPage === 1 ? 'red' : '']">音乐</li>
-        <li class="head-li" @click="move('/music')" v-bind:class="tagPage === 2 ? 'red' : ''">视频</li>
-        <li class="head-li" @click="move('/station')" v-bind:class="tagPage === 3 ? 'red' : ''">电台</li>
-      </ul>
-      <div class="bar" :class="Classmove"></div>
-    </header>
-    <transition>
-      <two-music v-if="tagPage === 1"></two-music>
-    </transition>
+  <div style="width: 100%; height: 100%">
+    <div class="hello-wrapper" ref="helloWrapper">
+      <div class="hello">
+        <div class="swipe-wrapper">
+          <swipe class="my-swipe">
+            <swipe-item class="slide1">
+              <img src="../../assets/1.png" alt="">
+            </swipe-item>
+            <swipe-item class="slide2">
+              <img src="../../assets/2.png" alt="">
+            </swipe-item>
+            <swipe-item class="slide3">
+              <img src="../../assets/3.png" alt="">
+            </swipe-item>
+            <swipe-item class="slide3">
+              <img src="../../assets/4.png" alt="">
+            </swipe-item>
+            <swipe-item class="slide3">
+              <img src="../../assets/5.png" alt="">
+            </swipe-item>
+            <swipe-item class="slide3">
+              <img src="../../assets/6.png" alt="">
+            </swipe-item>
+            <swipe-item class="slide3">
+              <img src="../../assets/7.png" alt="">
+            </swipe-item>
+            <swipe-item class="slide3">
+              <img src="../../assets/8.png" alt="">
+            </swipe-item>
+          </swipe>
+        </div>
+        <div class="cards border-1px">
+          <div class="card-li">
+            <div class="circle">
+            </div>
+            <p>私人FM</p>
+          </div>
+          <div class="card-li">
+            <div class="circle">
+              <span>20</span>
+            </div>
+            <p>每日推荐</p>
+          </div>
+          <div class="card-li">
+            <div class="circle">
+            </div>
+            <p>歌单</p>
+          </div>
+          <div class="card-li">
+            <div class="circle">
+            </div>
+            <p>排行榜</p>
+          </div>
+        </div>
+        <!--<div class="height">-->
+        <!---->
+        <!--</div>-->
+        <div class="music-list">
+          <musictitle :info="info" ></musictitle>
+          <ul class="list-ul">
+            <li v-for="item in music" @click="openmenuTotal(item)">
+              <img v-lazy="item.coverImgUrl" alt=""/>
+              <div class="item-content">
+                {{item.name}}
+              </div>
+            </li>
+          </ul>
+          <div class="loading" v-show="loading">
+            <img src="../../../static/img/rage_loading.png" alt="" width=100 height=100>
+          </div>
+        </div>
+      </div>
+    </div>
     <musicmenu ref="musicmenu" v-on:openmusicsong="show"></musicmenu>
     <Musicsong ref="musicsong"></Musicsong>
   </div>
@@ -19,21 +80,18 @@
 <script>
   import { Swipe, SwipeItem } from 'vue-swipe';
   import BScroll from 'better-scroll';
-  import Musictitle from './Musictitle/Musictitle.vue';
-  import Musicmenu from './Musicmenu/Musicmenu.vue';
-  import Musicsong from './Musicsong/Musicsong.vue';
-  import TwoMusic from './TwoMusic';
-//  import data from '../../data.json';
-  import api from '../api';
+  import Musictitle from '../Musictitle/Musictitle.vue';
+  import Musicmenu from '../Musicmenu/Musicmenu.vue';
+  import Musicsong from '../Musicsong/Musicsong.vue';
+  //  import data from '../../data.json';
+  import api from '../../api';
   export default {
-    name: 'hello',
+    name: 'TwoMusic',
     data() {
       return {
-        tagPage: 1,    //  表示音乐，2表示视屏，3表示电台
-        Classmove: 'classmove0',
         music: {},
         info: {
-          src: './static/img/aei.png',
+          src: '../../../static/img/aei.png',
           content: '推荐歌单'
         },
         loading: false
@@ -64,24 +122,11 @@
         }
       },
       openmenuTotal: function (item) {
-          this.$refs.musicmenu.show();
-          this.$refs.musicmenu.setmusiclist(item);
+        this.$refs.musicmenu.show();
+        this.$refs.musicmenu.setmusiclist(item);
       },
       show: function (item) {
         this.$refs.musicsong.show(item);
-      },
-      move: function (val) {
-        console.log(val);
-        if (val === '/') {
-          this.Classmove = 'classmove0';
-          this.tagPage = 1;
-        } else if (val === '/music') {
-          this.Classmove = 'classmove1';
-          this.tagPage = 2;
-        } else if (val === '/station') {
-          this.Classmove = 'classmove2';
-          this.tagPage = 3;
-        }
       }
     },
     components: {
@@ -89,52 +134,13 @@
       SwipeItem,
       Musictitle,
       Musicmenu,
-      Musicsong,
-      TwoMusic
+      Musicsong
     }
   };
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="stylus" rel="stylesheet/stylus" scoped>
-    header
-      font-family: 'Avenir', Helvetica, Arial, sans-serif
-      -webkit-font-smoothing: antialiased
-      -moz-osx-font-smoothing: grayscale
-      color: #2c3e50
-      ul
-        display: flex
-        .head-li
-          flex:1
-          display: inline-block
-          box-sizing: border-box
-          width: 33.3%
-          height:40px
-          font-size: 14px
-          text-align: center
-          line-height: 40px
-          background: #f8f8f9
-          color: #333
-        .red
-          color: #e43c33
-          &.active
-            color:#FF0200
-        .head-li:nth-child(4)
-          border-right:0
-      .bar
-        width: 16%
-        height: 2px
-        background: #FF0200
-        transition: all 0.375s
-        &.classmove0
-          transform: translate3d(54%,0,0)
-        &.classmove1
-          transform: translate3d(262%,0,0)
-        &.classmove2
-          transform: translate3d(471%,0,0)
-
-
-  @import "../common/stylus/mixin.styl";
+  @import "../../common/stylus/mixin.styl";
   img[lazy=error]
     transition: all 0.5s
     width: 100%
@@ -186,8 +192,8 @@
       border-1px(#ddd)
       .card-li
         display: inline-block
-        width: 30%
-        margin-left: 2.5%
+        width: 22%
+        margin-left: 2%
         margin-top: 10px
         margin-bottom: 10px
         .circle
@@ -217,13 +223,18 @@
           margin-top: 5px
       .card-li:nth-child(1)
         .circle
-          background: url(../assets/FM.png) no-repeat
-          background-size:50px 50px
+          background: url(../../assets/FM.png) no-repeat
+          background-size:40px 40px
           background-position: center
       .card-li:nth-child(3)
         .circle
-          background: url(../assets/ph.png) no-repeat
-          background-size:50px 50px
+          background: url(../../assets/slist.png) no-repeat
+          background-size:25px 25px
+          background-position: center
+      .card-li:nth-child(4)
+        .circle
+          background: url(../../assets/ph.png) no-repeat
+          background-size:40px 40px
           background-position: center
     .music-list
       .loading

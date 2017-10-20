@@ -92,9 +92,10 @@
 </template>
 
 <script type="text/ecmascript-6">
-import BScroll from 'better-scroll';
-import api from '../../api';
+  import BScroll from 'better-scroll';
+  import api from '../../api';
 export default{
+  name: 'musicmenu',
   data() {
     return {
       showFlag: false,
@@ -110,8 +111,9 @@ export default{
     };
   },
   methods: {
-    show() {
+    show () {
       this.showFlag = true;
+      console.log('musicmenu---------------', this.showFlag);
     },
     hide() {
       this.showFlag = false;

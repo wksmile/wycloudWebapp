@@ -3,15 +3,27 @@
     <div class="search">
       <div class="yuyin"></div>         <!--左侧图标-->
       <div class="top-header">          <!--头部三个标志-->
-        <span><img src="../../../static/img/music1.png"></span>
-        <span><img src="../../../static/img/music2.png"></span>
-        <span><img src="../../../static/img/People.png"></span>
+        <router-link to="/music">
+          <span v-if="tagPage === 1"><img src="../../../static/img/music1.png"></span>
+          <span v-else @click="changeTagPage(1)"><img src="../../../static/img/music1light.png"></span>
+        </router-link>
+        <router-link to="/">
+          <span v-if="tagPage === 2"><img src="../../../static/img/music2.png"></span>
+          <span v-else @click="changeTagPage(2)"><img src="../../../static/img/music2light.png"></span>
+        </router-link>
+        <router-link to="/station">
+          <span v-if="tagPage === 3"><img src="../../../static/img/People.png"></span>
+          <span v-else @click="changeTagPage(3)"><img src="../../../static/img/Peoplelight.png"></span>
+        </router-link>
       </div>
       <div class="music">   <!--右侧图标-->
         <span v-show="lshow" @click="hidelist">取消</span>
         <img src="../../../static/img/search.png" alt="" v-show="!lshow" @click="showlist">
       </div>
     </div>
+    <transition name="router-slid" mode="out-in">
+      <router-view></router-view>
+    </transition>
     <div class="searchresult" v-show="lshow">   <!--点击显示的搜索页面-->
       <ul class="list-ul">
         <li v-for="(item, index) in list" @click="opensong(item)">
@@ -40,9 +52,11 @@
 </template>
 
 <script type="text/ecmascript-6">
+
   export default{
     data() {
       return {
+        tagPage: 2,      //  表示当前是在哪一个页面  1表示头部第一个，2表示第二个 3表示第三个
         list: [],
         number: -1,
         lshow: false     //  true表示显示搜索页面，false表示显示页面
@@ -58,6 +72,9 @@
       openmusicsong() {      // 打开音乐播放页面
         var obj = null;
         this.$emit('openmusicsong', obj);
+      },
+      changeTagPage(tag) {
+        this.tagPage = tag;
       },
       opensong(item) {
         if (item) {
@@ -174,4 +191,12 @@
         .menu:nth-child(4)
           .menu-img
             background-image:url(../../../static/img/more.png)
+
+
+  .router-slid-enter-active, .router-slid-leave-active
+    transition: all .4s;
+
+  .router-slid-enter, .router-slid-leave-active
+    transform: translate3d(2rem, 0, 0);
+    opacity: 0;
 </style>

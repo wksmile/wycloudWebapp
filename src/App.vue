@@ -2,15 +2,7 @@
   <div id="app">
     <header>
       <music-head v-on:musicsearch="showsong" v-on:openmusicsong="showsong"></music-head>
-      <ul>
-        <li class="head-li" @click="move('/')">个性推荐</li>
-        <li class="head-li" @click="move('/music')">歌单</li>
-        <li class="head-li" @click="move('/station')">主播电台</li>
-        <li class="head-li" @click="move('/rank')">排行榜</li>
-      </ul>
-      <div class="bar" :class="Classmove"></div>
     </header>
-    <router-view ref="menu"></router-view>
   </div>
 </template>
 
