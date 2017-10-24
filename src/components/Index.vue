@@ -10,20 +10,20 @@
     </header>
     <transition>
       <two-music v-if="tagPage === 1"></two-music>
+      <two-movie v-if="tagPage === 2"></two-movie>
+      <two-broadcast v-if="tagPage === 3"></two-broadcast>
     </transition>
-    <musicmenu ref="musicmenu" v-on:openmusicsong="show"></musicmenu>
-    <Musicsong ref="musicsong"></Musicsong>
+    <!--<musicmenu ref="musicmenu" v-on:openmusicsong="show"></musicmenu>-->
+    <!--<Musicsong ref="musicsong"></Musicsong>-->
   </div>
 </template>
 
 <script>
   import { Swipe, SwipeItem } from 'vue-swipe';
   import BScroll from 'better-scroll';
-  import Musictitle from './Musictitle/Musictitle.vue';
-  import Musicmenu from './Musicmenu/Musicmenu.vue';
-  import Musicsong from './Musicsong/Musicsong.vue';
   import TwoMusic from './TwoMusic';
-//  import data from '../../data.json';
+  import TwoMovie from './TwoMovie';
+  import TwoBroadcast from './TwoBroadcast';
   import api from '../api';
   export default {
     name: 'hello',
@@ -67,9 +67,6 @@
           this.$refs.musicmenu.show();
           this.$refs.musicmenu.setmusiclist(item);
       },
-      show: function (item) {
-        this.$refs.musicsong.show(item);
-      },
       move: function (val) {
         console.log(val);
         if (val === '/') {
@@ -87,10 +84,9 @@
     components: {
       Swipe,
       SwipeItem,
-      Musictitle,
-      Musicmenu,
-      Musicsong,
-      TwoMusic
+      TwoMusic,
+      TwoMovie,
+      TwoBroadcast
     }
   };
 </script>

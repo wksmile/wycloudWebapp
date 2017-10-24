@@ -1,5 +1,5 @@
 <template>
-  <transition-group name="fade" >
+  <transition-group name="fade">
     <div class="musicsong-wrapper" v-show="showFlag" key="musicsong">
       <div class="scroll-warpper">
         <div class="menu-title border-1px">
@@ -15,10 +15,10 @@
           </div>
         </div>
         <div class="rotate">
-          <div class="rotate-img" :class="{'cd-paly':!playing}">
+          <div class="rotate-img" :class="{'cd-paly':!playingSong}">
             <img src="../../../static/img/stick_bg.png" alt="" height=140 >
           </div>
-          <div class="rotate-mid" :class="{'cd-rotate':!playing}">
+          <div class="rotate-mid" :class="{'cd-rotate':!playingSong}">
             <img :src="albumPic + '?param=500y500'" alt="">
           </div>
         </div>
@@ -39,7 +39,7 @@
           <div class="action">
             <span></span>
             <span @click="pre"></span>
-            <span @click="togglePlay" :class="{'isplay':playing,'noplay':!playing}"></span>
+            <span @click="togglePlay" :class="{'isplay':playingSong,'noplay':!playingSong}"></span>
             <span @click="next"></span>
             <span @click="showlist"></span>
           </div>
@@ -64,7 +64,7 @@
       <div class="list">
         <transition name="fade">
           <div class="list-bg" @click="hidelist"  v-show="listshow"></div>
-        </transition >
+        </transition>
         <transition name="fold">
           <div class="list-song" v-show="listshow">
             <div class="title" @click="nulllist">清空</div>
@@ -87,26 +87,27 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import { mapState, mapMutations } from 'vuex';
   import Progressslider from '../Progressslider/Progressslider.vue';
   import {changeTime} from '../../common/js/changeTime';
   import BScroll from 'better-scroll';
   import api from '../../api';
-  export default{
+  export default {
     data() {
       return {
         index: -1,
         listshow: false,
         showFlag: false,
-        playing: true,
+        playingSong: true,
         tipshow: false,
         mwidth: 0,
-        time: {
+        time: {      // 播放的时间
           start: '00:00',
           end: '00:00'
         },
-        song: {},
-        audiourl: '',
-        albumPic: '../../../static/img/placeholder_disk_play_song.png',
+        song: {},      // 播放的歌曲
+        audiourl: '',   // 播放的歌曲url
+        albumPic: '../../../static/img/placeholder_disk_play_song.png',   //  歌曲的图片
         songname: '暂无歌曲',
         list: []
       };
@@ -116,7 +117,28 @@
         this.canPlaySong();
       });
     },
+    computed: mapState([
+      'isCurrentsong', 'playing', 'ischangeplaying'
+    ]),
+    watch: {
+      // 监听vuex中store中的playing状态的变化
+      playing: {
+        handler: function () {
+          console.log('我执行了---');
+          if (this.playing === true) {
+            document.getElementById('audioPlay').pause();
+          } else {
+            document.getElementById('audioPlay').play();
+          }
+        },
+        immediate: false
+      }
+    },
     methods: {
+      ...mapMutations([
+        'SAVE_CURRENT_MUSIC', 'CHANGE_ISCURRENTSONG', 'CHANGE_PLAYING', 'CHANGE_ISCHANGEPLAYING'
+      ]),
+      //  上一首
       pre() {
         if (this.index > 0) {
           console.log('pre');
@@ -125,6 +147,7 @@
           this.playsong(this.index, this.item);
         }
       },
+      //  下一首
       next() {
         if (this.index < this.list.length - 1) {
           console.log('next');
@@ -143,6 +166,7 @@
         }
       },
       nulllist() {
+        //  清空歌单隐藏歌曲列表
         this.list.splice(0, this.list.length);
         this.hide();
       },
@@ -154,6 +178,8 @@
       },
       show(item) {
 //      this.albumPic = item.al.picUrl;
+        //  进入歌曲详细信息页面隐藏底部当前歌曲信息
+        this.CHANGE_ISCURRENTSONG(false);
         this.showFlag = true;
         if (item) {
           let index = 0;
@@ -173,12 +199,15 @@
           } else {
             this.playsong(thisindex, item);
           }
-        }
+        };
+        //  保存当前歌曲信息到vuex
+        this.SAVE_CURRENT_MUSIC(item);
       },
       playsong(index, item) {
         console.log(index);
         this.hidelist();
         this.index = index;
+        console.log('----+++', item);
         this.song = item;
         this.albumPic = item.migUrl;
         this.songname = item.songname;
@@ -193,9 +222,17 @@
           this.canPlaySong();
         }
       },
+      //  播放歌曲
       canPlaySong() {
         document.getElementById('audioPlay').play();
-        this.playing = false;
+        //  播放的时候改变playing状态，底部按钮状态
+        if (this.ischangeplaying) {
+          this.CHANGE_PLAYING(false);
+        } else {
+          this.CHANGE_ISCHANGEPLAYING();
+        }
+        console.log('我不想改变啊-=-=-=-=');
+        this.playingSong = false;
       },
       get(item) {
         this.$http.get(api.getSong(item.id)).then((res) => {
@@ -215,14 +252,17 @@
       },
       hide() {
         this.showFlag = false;
+        this.CHANGE_ISCURRENTSONG(true);
       },
       togglePlay() {
-        if (this.playing === false) {
+        if (this.playingSong === false) {
           document.getElementById('audioPlay').pause();
-          this.playing = true;
+          this.playingSong = true;
+          this.CHANGE_PLAYING(true);
         } else {
           document.getElementById('audioPlay').play();
-          this.playing = false;
+          this.playingSong = false;
+          this.CHANGE_PLAYING(true);
         }
       },
       updateTime() {

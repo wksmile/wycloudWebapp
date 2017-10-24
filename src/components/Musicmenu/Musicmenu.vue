@@ -99,7 +99,7 @@ export default{
   data() {
     return {
       showFlag: false,
-      musiclist: {},
+      musiclist: {},      // 专辑下的歌单列表
       number: -1,
       coverImgUrl: '',
       name: '',
@@ -107,20 +107,24 @@ export default{
       id: '',
       creator: '',
       trackCount: 0,
-      opacity: 0
+      opacity: 0          // 歌单头部标题的透明度
     };
   },
   methods: {
     show () {
+      //  专辑详情
       this.showFlag = true;
       console.log('musicmenu---------------', this.showFlag);
     },
     hide() {
+      // 隐藏专辑详情
       this.showFlag = false;
     },
+    // 隐藏专辑详情
     hideTotal() {
       this.hide();
     },
+    //  获取歌曲信息，创送给父组件，从而打开歌曲详情界面
     openmusicsong(index, item) {
       this.number = index;
       var obj;
@@ -137,8 +141,10 @@ export default{
 
       this.$emit('openmusicsong', obj);
     },
+    //  item参数为从父组件中获取到的专辑歌单数据
     setmusiclist(item) {
       this._get(item);
+      //  设置专辑详情界面元素
       this.coverImgUrl = item.coverImgUrl;
       this.name = item.name;
       this.description = item.desc;
@@ -147,6 +153,7 @@ export default{
       this.trackCount = item.trackCount;
     },
     _get(item) {
+      // 根据专辑id获取到专辑中的歌曲
       this.$http.get(api.getPlayListDetail(item.id)).then((res) => {
         this.musiclist = res.data.playlist.tracks;
         this.$nextTick(() => {
@@ -162,8 +169,10 @@ export default{
           probeType: 3,
           click: true
         });
+        //    不同位置设置头部不同的透明度
         this.menuScroll.on('scroll', (pos) => {
-//          console.log(Math.abs(Math.round(pos.y)));
+        //    console.log(Math.abs(Math.round(pos.y)));
+          console.log(pos);
           let myopacity = Math.abs(Math.round(pos.y)) / 150;
 
           if (Math.round(pos.y) < 0) {

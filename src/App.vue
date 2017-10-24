@@ -7,7 +7,10 @@
 </template>
 
 <script>
+
+import { mapActions } from 'vuex';
 import MusicHead from './components/MusicHead';
+
 export default {
   data() {
     return {
@@ -15,7 +18,13 @@ export default {
       show: true
     };
   },
+  created () {
+    this.initializeData();
+  },
   methods: {
+    ...mapActions([
+      'initializeData'
+    ]),
     showsong(item) {
       console.log(11);
       console.log('---', item);

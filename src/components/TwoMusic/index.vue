@@ -72,6 +72,7 @@
         </div>
       </div>
     </div>
+    <musicsearch v-on:musicsearch="showsong" v-on:openmusicsong="showsong"></musicsearch>
     <musicmenu ref="musicmenu" v-on:openmusicsong="show"></musicmenu>
     <Musicsong ref="musicsong"></Musicsong>
   </div>
@@ -83,13 +84,14 @@
   import Musictitle from '../Musictitle/Musictitle.vue';
   import Musicmenu from '../Musicmenu/Musicmenu.vue';
   import Musicsong from '../Musicsong/Musicsong.vue';
+  import musicsearch from '../musicsearch/musicsearch';
   //  import data from '../../data.json';
   import api from '../../api';
   export default {
     name: 'TwoMusic',
     data() {
       return {
-        music: {},
+        music: {},     //  9个专辑的歌曲
         info: {
           src: '../../../static/img/aei.png',
           content: '推荐歌单'
@@ -104,6 +106,7 @@
     methods: {
       get() {
         this.loading = true;
+        // 获取最热的9个专辑
         this.$http.get(api.getPlayListByWhere('全部', 'hot', 0, true, 9)).then((res) => {
           this.music = res.data.playlists;
           this.$nextTick(() => {
@@ -123,8 +126,10 @@
       },
       openmenuTotal: function (item) {
         this.$refs.musicmenu.show();
+        //  点击不同的专辑，将该专辑下的歌曲发送给子组件
         this.$refs.musicmenu.setmusiclist(item);
       },
+      // 从musicmenu中点击某一歌曲触发父组件的事件调用此函数，显示歌曲详情页面
       show: function (item) {
         this.$refs.musicsong.show(item);
       }
@@ -134,7 +139,8 @@
       SwipeItem,
       Musictitle,
       Musicmenu,
-      Musicsong
+      Musicsong,
+      musicsearch
     }
   };
 </script>
@@ -178,7 +184,7 @@
     width: 100%
     position: absolute
     top:87px
-    bottom:0
+    bottom: 45px;
     overflow: hidden
     background:#fff
     .my-swipe

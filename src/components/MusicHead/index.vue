@@ -16,7 +16,7 @@
           <span v-else @click="changeTagPage(3)"><img src="../../../static/img/Peoplelight.png"></span>
         </router-link>
       </div>
-      <div class="music">   <!--右侧图标-->
+      <div class="music">   <!--右侧图标 -->
         <span v-show="lshow" @click="hidelist">取消</span>
         <img src="../../../static/img/search.png" alt="" v-show="!lshow" @click="showlist">
       </div>
@@ -48,21 +48,40 @@
         </li>
       </ul>
     </div>
+    <!-- 底部歌曲信息 -->
+    <transition name="slid-down">
+      <div class="musicbottom" v-show="isCurrentsong">
+        <div class="musicbottomcontain">
+          <span><img :src="currentMusic.migUrl"></span>
+          <span class="name"><span class="songname">{{currentMusic.songname}}</span><span class="singername">{{currentMusic.name}}</span></span>
+          <span @click="togglePlay" :class="{'isplay':playing,'noplay':!playing}"></span>
+          <span class="collect"><img src="../../../static/img/collect.png"></span>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import { mapState, mapMutations } from 'vuex';
 
   export default{
     data() {
       return {
+//      playing: false,   //  是否处于播放状态
         tagPage: 2,      //  表示当前是在哪一个页面  1表示头部第一个，2表示第二个 3表示第三个
         list: [],
         number: -1,
         lshow: false     //  true表示显示搜索页面，false表示显示页面
       };
     },
+    computed: mapState([
+      'currentMusic', 'isCurrentsong', 'playing'
+    ]),
     methods: {
+      ...mapMutations([
+        'CHANGE_PLAYING'
+      ]),
       showlist() {      // 显示搜索页面
         this.lshow = true;
       },
@@ -75,6 +94,18 @@
       },
       changeTagPage(tag) {
         this.tagPage = tag;
+      },
+      //  通过底部的播放按钮播放歌曲
+      togglePlay() {
+        if (this.playing === false) {
+//          document.getElementById('audioPlay').pause();
+          this.CHANGE_PLAYING(true);
+//          this.playing = true;
+        } else {
+//          document.getElementById('audioPlay').play();
+          this.CHANGE_PLAYING(false);
+//          this.playing = false;
+        }
       },
       opensong(item) {
         if (item) {
@@ -95,7 +126,7 @@
   };
 </script>
 
-<style lang="stylus" rel="stylesheet/stylus">
+<style lang="stylus" rel="stylesheet/stylus" scoped>
   @import "../../common/stylus/mixin.styl";
   .search
     background:#d43c33
@@ -191,12 +222,69 @@
         .menu:nth-child(4)
           .menu-img
             background-image:url(../../../static/img/more.png)
-
-
   .router-slid-enter-active, .router-slid-leave-active
     transition: all .4s;
-
   .router-slid-enter, .router-slid-leave-active
     transform: translate3d(2rem, 0, 0);
     opacity: 0;
+  .musicbottom
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 45px;
+    background: #d4b3ae;
+    z-index : 100;
+    &.slid-down-enter-active, &.slid-down-leave-active
+      transition: all .4s;
+    &.slid-down-enter, &.slid-down-leave-active
+      transform: translate3d(0,100%,0);
+      opacity: 0;
+    .musicbottomcontain
+      width: 100%;
+      span
+        flex: 1
+        display: inline-block
+        height: 45px
+        background-repeat: no-repeat
+        background-position: center center
+        &.isplay
+          display: inline-block;
+          margin: 5px 10px;
+          width: 35px;
+          height: 35px;
+          background-image:url(../../../static/img/play.png)
+          background-size: 35px 35px;
+        &.noplay
+          display: inline-block
+          margin: 5px 10px;
+          width: 35px;
+          height: 35px;
+          background-image:url(../../../static/img/pause.png)
+          background-size:35px 35px
+        img
+          width: 35px;
+          height: 35px;
+          margin: 5px;
+        .collect
+          width: 30px;
+          height: 30px;
+        &.name
+          width: 50%;
+          overflow: hidden;
+          position: relative;
+          .songname
+            position: absolute;
+            top: 5px;
+            left: 0;
+            height: 20px;
+            white-space: nowrap;
+          .singername
+            position: absolute;
+            bottom: 5px;
+            left: 0;
+            height: 15px;
+            font-size: 10px;
+            color: #626262;
+            white-space: nowrap;
 </style>

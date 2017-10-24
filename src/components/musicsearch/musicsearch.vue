@@ -1,5 +1,6 @@
 <template>
   <div>
+    <transition-group name="fade">
     <div class="search">
       <div class="yuyin"></div>
       <div class="input" @click="showlist">
@@ -34,6 +35,7 @@
         </li>
       </ul>
     </div>
+    </transition-group>
   </div>
 </template>
 
@@ -99,6 +101,12 @@ export default{
     background:#d43c33
     height:46px
     display :flex
+    &.fade-enter-active, &.fade-leave-active
+      transition: all 0.2s linear
+      transform translate3d(0, 0, 0)
+    &.fade-enter, &.fade-leave-active
+      opacity: 0
+      transform translate3d(100%, 0, 0)
     .yuyin
       flex-basis:40px
       background:url(../../../static/img/menu1.png) no-repeat;
