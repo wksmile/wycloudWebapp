@@ -24,7 +24,7 @@
                 <p @click="plusComment(index)"><img src="../../../static/img/comment.png" width="25" height="25"></p>
                 <p>{{comment[index]}}</p>
               </div>
-              <div class="video-share">
+              <div class="video-share" @click="showShare(index)">
                 <img src="../../../static/img/videomenu.png" width="25" height="25">
               </div>
             </div>
@@ -32,6 +32,7 @@
         </ul>
       </div>
     </div>
+    <mv-share ref="mvshare"></mv-share>
   </div>
 </template>
 
@@ -39,6 +40,7 @@
   //  ?????????   页面滚动存在问题
   import BScroll from 'better-scroll';
   import api from '../../api';
+  import MvShare from '../MvShare';
 
   export default {
     data () {
@@ -60,6 +62,9 @@
       this.getMvList(9);
     },
     methods: {
+      showShare (index) {
+        this.$refs.mvshare.show(index);
+      },
       //  播放视频 或者暂停视屏
       playVideo ($event, index) {
         console.log($event.target);
@@ -141,6 +146,9 @@
           this.mvScroll.refresh();
         }
       }
+    },
+    components: {
+      MvShare
     }
   };
 </script>

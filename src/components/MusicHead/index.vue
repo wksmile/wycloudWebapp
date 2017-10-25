@@ -4,16 +4,16 @@
       <div class="yuyin"></div>         <!--左侧图标-->
       <div class="top-header">          <!--头部三个标志-->
         <router-link to="/music">
-          <span v-if="tagPage === 1"><img src="../../../static/img/music1.png"></span>
-          <span v-else @click="changeTagPage(1)"><img src="../../../static/img/music1light.png"></span>
+          <span v-show="tagPage === 1"><img src="../../../static/img/music1.png"></span>
+          <span v-show="tagPage !== 1" @click="changeTagPage(1)"><img src="../../../static/img/music1light.png"></span>
         </router-link>
         <router-link to="/">
-          <span v-if="tagPage === 2"><img src="../../../static/img/music2.png"></span>
-          <span v-else @click="changeTagPage(2)"><img src="../../../static/img/music2light.png"></span>
+          <span v-show="tagPage === 2"><img src="../../../static/img/music2.png"></span>
+          <span v-show="tagPage !== 2" @click="changeTagPage(2)"><img src="../../../static/img/music2light.png"></span>
         </router-link>
         <router-link to="/station">
-          <span v-if="tagPage === 3"><img src="../../../static/img/People.png"></span>
-          <span v-else @click="changeTagPage(3)"><img src="../../../static/img/Peoplelight.png"></span>
+          <span v-show="tagPage === 3"><img src="../../../static/img/People.png"></span>
+          <span v-show="tagPage !== 3" @click="changeTagPage(3)"><img src="../../../static/img/Peoplelight.png"></span>
         </router-link>
       </div>
       <div class="music">   <!--右侧图标 -->

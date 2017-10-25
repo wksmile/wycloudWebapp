@@ -9,9 +9,9 @@
       <div class="bar" :class="Classmove"></div>
     </header>
     <transition>
-      <two-music v-if="tagPage === 1"></two-music>
-      <two-movie v-if="tagPage === 2"></two-movie>
-      <two-broadcast v-if="tagPage === 3"></two-broadcast>
+      <two-music v-show="tagPage === 1"></two-music>
+      <two-movie v-show="tagPage === 2"></two-movie>
+      <two-broadcast v-show="tagPage === 3"></two-broadcast>
     </transition>
     <!--<musicmenu ref="musicmenu" v-on:openmusicsong="show"></musicmenu>-->
     <!--<Musicsong ref="musicsong"></Musicsong>-->
