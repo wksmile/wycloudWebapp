@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%;height: 100%;">
-    <header>
+    <header>    <!-- 最上面中间按钮路由的子页面 -->
       <ul>
         <li class="head-li" @click="move('/')" v-bind:class="[tagPage === 1 ? 'red' : '']">音乐</li>
         <li class="head-li" @click="move('/music')" v-bind:class="tagPage === 2 ? 'red' : ''">视频</li>
@@ -9,9 +9,9 @@
       <div class="bar" :class="Classmove"></div>
     </header>
     <transition>
-      <two-music v-show="tagPage === 1"></two-music>
-      <two-movie v-show="tagPage === 2"></two-movie>
-      <two-broadcast v-show="tagPage === 3"></two-broadcast>
+      <two-music v-show="tagPage === 1"></two-music>           <!--音乐-->
+      <two-movie v-if="tagPage === 2"></two-movie>            <!--视屏-->
+      <two-broadcast v-show="tagPage === 3"></two-broadcast>     <!--电台-->
     </transition>
     <!--<musicmenu ref="musicmenu" v-on:openmusicsong="show"></musicmenu>-->
     <!--<Musicsong ref="musicsong"></Musicsong>-->
@@ -19,24 +19,15 @@
 </template>
 
 <script>
-  import { Swipe, SwipeItem } from 'vue-swipe';
-  import BScroll from 'better-scroll';
   import TwoMusic from './TwoMusic';
   import TwoMovie from './TwoMovie';
   import TwoBroadcast from './TwoBroadcast';
-  import api from '../api';
   export default {
     name: 'hello',
     data() {
       return {
         tagPage: 1,    //  表示音乐，2表示视屏，3表示电台
-        Classmove: 'classmove0',
-        music: {},
-        info: {
-          src: './static/img/aei.png',
-          content: '推荐歌单'
-        },
-        loading: false
+        Classmove: 'classmove0'
       };
     },
     created() {
@@ -44,29 +35,6 @@
 //      this.music = data.music;
     },
     methods: {
-      get() {
-        this.loading = true;
-        this.$http.get(api.getPlayListByWhere('全部', 'hot', 0, true, 9)).then((res) => {
-          this.music = res.data.playlists;
-          this.$nextTick(() => {
-            this._initScroll();
-          });
-          this.loading = false;
-        });
-      },
-      _initScroll() {
-        if (!this.helloScroll) {
-          this.helloScroll = new BScroll(this.$refs.helloWrapper, {
-            click: true
-          });
-        } else {
-          this.helloScroll.refresh();
-        }
-      },
-      openmenuTotal: function (item) {
-          this.$refs.musicmenu.show();
-          this.$refs.musicmenu.setmusiclist(item);
-      },
       move: function (val) {
         console.log(val);
         if (val === '/') {
@@ -82,8 +50,6 @@
       }
     },
     components: {
-      Swipe,
-      SwipeItem,
       TwoMusic,
       TwoMovie,
       TwoBroadcast

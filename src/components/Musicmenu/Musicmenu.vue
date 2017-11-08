@@ -24,7 +24,8 @@
              {{name}}
             </span>
                 <div class="user-name">
-                  <p>{{creator.nickname}}</p>
+                  <p v-if="creator.nickname">{{creator.nickname}}</p>
+                  <p v-else>{{creator}}</p>
                   <img src="../../../static/img/arrows_right.png" alt="">
                 </div>
               </div>
@@ -69,11 +70,12 @@
                 </div>
                 <div class="title border-1px" >
               <span class="music-name" :class="{'active': number===index}">
-                {{item.name}}
+                {{isPage === 1 ? item.name : item.songname}}
               </span>
                   <p>
                     <i v-show="item.sq"></i>
-                    <span :class="{'active': number===index}">{{item.ar[0].name}} - {{item.al.name}}</span>
+                    <span v-if="item.ar" :class="{'active': number===index}">{{item.ar[0].name}} - {{item.al.name}}</span>
+                    <span v-else :class="{'active': number===index}">{{item.name}} - {{item.songname}}</span>
                   </p>
                 </div>
                 <div class="menu border-1px" v-show="item.movie">
@@ -98,20 +100,21 @@ export default{
   name: 'musicmenu',
   data() {
     return {
+      isPage: null,       //  判断是哪一个页面，1表示专辑的列表，2表示歌单的列表
       showFlag: false,
       musiclist: {},      // 专辑下的歌单列表
       number: -1,
       coverImgUrl: '',
-      name: '',
+      name: '',          //  歌曲名
       description: '',
       id: '',
-      creator: '',
-      trackCount: 0,
+      creator: '',       //  创作者
+      trackCount: 0,     // 歌曲总数
       opacity: 0          // 歌单头部标题的透明度
     };
   },
   methods: {
-    show () {
+    show() {
       //  专辑详情
       this.showFlag = true;
       console.log('musicmenu---------------', this.showFlag);
@@ -129,33 +132,63 @@ export default{
       this.number = index;
       var obj;
       if (item) {
-        obj = {
-          id: item.id,
-          migUrl: item.al.picUrl,
-          name: item.ar[0].name,
-          songname: item.name
-        };
+          if (this.isPage === 1) {
+            obj = {
+              id: item.id,
+              migUrl: item.al.picUrl,
+              name: item.ar[0].name,
+              songname: item.name
+            };
+          } else if (this.isPage === 2) {
+            obj = {
+              id: item.id,
+              migUrl: item.migUrl,
+              name: item.name,
+              songname: item.songname
+            };
+          }
       } else {
         obj = null;
       }
 
       this.$emit('openmusicsong', obj);
     },
+    // 页面是歌单列表时设置封面详情
+    setmusiclistdetail (item) {
+      this.musiclist = item.collectList;
+      //  设置专辑详情界面元素
+      //  列表中第一首歌
+      let firstMusic = item.collectList[0];
+      console.log('firstMusic------+++--', firstMusic);
+      this.coverImgUrl = firstMusic['migUrl'];
+      this.name = firstMusic.songname;
+//    this.description = item.collectName;
+      this.creator = firstMusic['name'];
+      this.id = item.collectMusicId;
+      this.trackCount = item.collectList.length;
+    },
     //  item参数为从父组件中获取到的专辑歌单数据
     setmusiclist(item) {
-      this._get(item);
-      //  设置专辑详情界面元素
-      this.coverImgUrl = item.coverImgUrl;
-      this.name = item.name;
-      this.description = item.desc;
-      this.creator = item.creator;
-      this.id = item.id;
-      this.trackCount = item.trackCount;
+        if (item.collectName) {   // item为state中collectMusic中的某一项，  还没考虑列表为空的情况
+          this.isPage = 2;
+          this.setmusiclistdetail(item);
+        } else {   // 专辑的页面
+          this.isPage = 1;
+          this._get(item);
+          //  设置专辑详情界面元素
+          this.coverImgUrl = item.coverImgUrl;
+          this.name = item.name;
+          this.description = item.desc;
+          this.creator = item.creator;
+          this.id = item.collectMusicId;
+          this.trackCount = item.trackCount;
+        }
     },
     _get(item) {
       // 根据专辑id获取到专辑中的歌曲
       this.$http.get(api.getPlayListDetail(item.id)).then((res) => {
         this.musiclist = res.data.playlist.tracks;
+//        console.log('list-------------------', this.musiclist);
         this.$nextTick(() => {
           this._initScroll();
         });

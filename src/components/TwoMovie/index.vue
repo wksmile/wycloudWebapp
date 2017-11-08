@@ -60,6 +60,7 @@
       this.initialData(9);
       //  获取数据
       this.getMvList(9);
+      console.log('wozhixingl---------');
     },
     methods: {
       showShare (index) {

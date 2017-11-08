@@ -1,4 +1,4 @@
-<template>
+<template>       <!--音乐页面-->
   <div style="width: 100%; height: 100%">
     <div class="hello-wrapper" ref="helloWrapper">
       <div class="hello">
@@ -56,11 +56,11 @@
         <!--<div class="height">-->
         <!---->
         <!--</div>-->
-        <div class="music-list">
+        <div class="music-list">   <!--推荐歌单的那一块专辑部分-->
           <musictitle :info="info" ></musictitle>
           <ul class="list-ul">
             <li v-for="item in music" @click="openmenuTotal(item)">
-              <img v-lazy="item.coverImgUrl" alt=""/>
+              <img v-lazy="item.coverImgUrl" alt=""/>   <!--专辑的图片-->
               <div class="item-content">
                 {{item.name}}
               </div>
@@ -126,7 +126,7 @@
       },
       openmenuTotal: function (item) {
         this.$refs.musicmenu.show();
-        //  点击不同的专辑，将该专辑下的歌曲发送给子组件
+        //  点击不同的专辑,将该专辑下的歌曲发送给子组件
         this.$refs.musicmenu.setmusiclist(item);
       },
       // 从musicmenu中点击某一歌曲触发父组件的事件调用此函数，显示歌曲详情页面

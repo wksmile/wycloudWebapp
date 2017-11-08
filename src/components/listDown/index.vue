@@ -3,16 +3,16 @@
     <div class="list-content">
       <div class="list-menu" @click="toggleShow">
         <span class="list-arrow"><img v-bind:class="[flagShow ? 'img90rotate' : 'imgr90rotate']" src="../../../static/img/htb_right.png" width="15" height="15"></span>
-        <span class="list-text"><span>{{listName}}</span><span>{{musicListNum}}首</span></span>
+        <span class="list-text"><span>{{listName}}</span><span>({{musicListNum}})</span></span>
         <span class="list-setting"><img src="../../../static/img/setting.png" width="20" height="20"></span>
       </div>
       <transition name="slid-doen">
         <div class="list-detail" v-show="flagShow">
           <ul>
-            <li class="list-item" v-for="item in musicList">
-              <span class="musicImg"><img :src="item.icon" height="50" width="50"></span>
+            <li class="list-item" v-for="item in musicList" @click="emitMenuTotal(item)">
+              <span class="musicImg"><img :src="imageUrl(item)" height="50" width="50"></span>
               <div class="text">
-                <span class="musicText"><p>{{item.text}}</p><p>{{item.num}}首</p></span><span class="musicShare"><img src="../../../static/img/videomenu.png" width="20" height="20"></span>
+                <span class="musicText"><p>{{item.collectName}}</p><p>{{item.collectList.length}}首</p></span><span class="musicShare"><img src="../../../static/img/videomenu.png" width="20" height="20"></span>
               </div>
             </li>
           </ul>
@@ -30,7 +30,7 @@
       };
     },
     props: {
-      musicList: {
+      musicList: {    //  对应state中collectMusic数组
         type: Array,
         required: true
       },
@@ -45,6 +45,16 @@
       }
     },
     methods: {
+        //  点击下拉列表中的某一项的触发父组件打开歌单列表的函数
+      emitMenuTotal (item) {     //   item为state中collectMusic数组的某一项
+          this.$emit('openMenu', item);
+      },
+      imageUrl (item) {
+        if (item.collectList[0]) {
+          return item.collectList[0]['migUrl'] || 'https://p1.music.126.net/xEyRt-hCsxf0qGahe4x_cQ==/6667438510890773.jpg';
+        }
+        return 'https://p1.music.126.net/BB7MN7suxt5kL3H20Y7iRw==/109951162931651320.jpg';   // 小孩
+      },
       toggleShow () {
         this.flagShow = !this.flagShow;
         this.$nextTick(function () {

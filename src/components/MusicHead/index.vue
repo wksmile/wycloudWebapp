@@ -2,7 +2,7 @@
   <div>
     <div class="search">
       <div class="yuyin"></div>         <!--左侧图标-->
-      <div class="top-header">          <!--头部三个标志-->
+      <div class="top-header">          <!--最上面头部三个标志-->
         <router-link to="/music">
           <span v-show="tagPage === 1"><img src="../../../static/img/music1.png"></span>
           <span v-show="tagPage !== 1" @click="changeTagPage(1)"><img src="../../../static/img/music1light.png"></span>

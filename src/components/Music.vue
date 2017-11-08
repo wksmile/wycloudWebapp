@@ -1,4 +1,4 @@
-<template>
+<template>         <!--最上面左边按钮路由的子页面-->
   <div style="width: 100%;height: 100%;">
     <div class="music-wrapper" ref="musicWrapper">
       <div class="music">
@@ -8,16 +8,22 @@
           </li>
         </ul>
         <div class="music-detail">
-          <music-list listName="创建的歌单" :musicList="music" v-on:initialScroll="_initialScroll"></music-list>
-          <music-list listName="收藏的歌单" :musicList="music" v-on:initialScroll="_initialScroll"></music-list>
+          <music-list listName="创建的歌单" :musicList="collectMusic" v-on:openMenu="openmenuTotal" v-on:initialScroll="_initialScroll"></music-list>
+          <music-list listName="收藏的歌单" :musicList="[]" v-on:initialScroll="_initialScroll"></music-list>
         </div>
       </div>
     </div>
+    <music-menu ref="musicmenu" v-on:openmusicsong="show"></music-menu>
+    <music-song ref="musicsong"></music-song>
   </div>
 </template>
 
 <script>
+  import {mapState} from 'vuex';
   import BScroll from 'better-scroll';
+  import MusicMenu from './Musicmenu/Musicmenu.vue';
+  import MusicSong from './Musicsong/Musicsong.vue';
+  import api from '../api';
   import MusicList from './listDown';
 
   export default{
@@ -49,13 +55,28 @@
             text: '我的收藏',
             num: 4
           }
-        ]
+        ],
+        albumlist: []
       };
     },
     mounted () {
-      this._initScroll();
+      this._initialScroll();
+    },
+    created () {
+      this.get();
+    },
+    computed: {
+      ...mapState([
+        'collectMusic'
+      ])
     },
     methods: {
+      openmenuTotal: function (item) {
+          // item为state中collectMusic中的某一项
+        this.$refs.musicmenu.show();
+        //  点击不同的专辑,将该专辑下的歌曲发送给子组件
+        this.$refs.musicmenu.setmusiclist(item);
+      },
       _initialScroll () {
         if (!this.musicScroll) {
           this.musicScroll = new BScroll(this.$refs.musicWrapper, {
@@ -64,10 +85,25 @@
         } else {
           this.musicScroll.refresh();
         };
+      },
+      //  根据关键词获取到专辑
+      get() {
+        // 获取最热的9个专辑
+        this.$http.get(api.getPlayListByWhere('全部', 'hot', 0, true, 9)).then((res) => {
+          this.albumlist = res.data.playlists;
+          this.$nextTick(() => {
+            this._initialScroll();
+          });
+        });
+      },
+      show: function (item) {
+        this.$refs.musicsong.show(item);
       }
     },
     components: {
-      MusicList
+      MusicList,
+      MusicMenu,
+      MusicSong
     }
   };
 </script>

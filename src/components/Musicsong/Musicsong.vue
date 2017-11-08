@@ -24,7 +24,7 @@
         </div>
         <div class="bottom">
           <div class="menu">
-            <span></span>
+            <span v-bind:class="[isLove ? 'nolove' : 'love']" @click="collect"></span>
             <span></span>
             <span></span>
             <span></span>
@@ -101,15 +101,16 @@
         playingSong: true,
         tipshow: false,
         mwidth: 0,
-        time: {      // 播放的时间
+        time: {             // 播放的时间
           start: '00:00',
           end: '00:00'
         },
-        song: {},      // 播放的歌曲
-        audiourl: '',   // 播放的歌曲url
-        albumPic: '../../../static/img/placeholder_disk_play_song.png',   //  歌曲的图片
+        song: {},           // 播放的歌曲
+        audiourl: '',       // 播放的歌曲url
+        albumPic: '../../../static/img/placeholder_disk_play_song.png',    //  歌曲的图片
         songname: '暂无歌曲',
-        list: []
+        list: [],
+        isLove: false            //   是否收藏了
       };
     },
     created() {
@@ -117,9 +118,14 @@
         this.canPlaySong();
       });
     },
-    computed: mapState([
-      'isCurrentsong', 'playing', 'ischangeplaying'
-    ]),
+    computed: {
+      ...mapState([
+        'isCurrentsong', 'playing', 'ischangeplaying', 'collectMusic'
+      ]),
+      musicId () {
+        return this.$store.getters.collectMusicId;
+      }
+    },
     watch: {
       // 监听vuex中store中的playing状态的变化
       playing: {
@@ -136,8 +142,21 @@
     },
     methods: {
       ...mapMutations([
-        'SAVE_CURRENT_MUSIC', 'CHANGE_ISCURRENTSONG', 'CHANGE_PLAYING', 'CHANGE_ISCHANGEPLAYING'
+        'SAVE_CURRENT_MUSIC', 'CHANGE_ISCURRENTSONG', 'CHANGE_PLAYING', 'CHANGE_ISCHANGEPLAYING', 'ADD_COLLECT_MUSIC', 'DELETE_COLLECT_MUSIC'
       ]),
+      //  重新加载歌曲部分数据需要更新
+      initialData (item) {
+        this.isLove = this.collectMusic[0]['collectMusicId'].indexOf(item.id) > 0;
+      },
+      //  添加或者删除喜欢的音乐
+      collect () {
+        this.isLove = !this.isLove;
+        if (this.isLove) {
+          this.ADD_COLLECT_MUSIC('我喜欢的音乐');
+        } else {
+          this.DELETE_COLLECT_MUSIC('我喜欢的音乐');
+        }
+      },
       //  上一首
       pre() {
         if (this.index > 0) {
@@ -231,10 +250,11 @@
         } else {
           this.CHANGE_ISCHANGEPLAYING();
         }
-        console.log('我不想改变啊-=-=-=-=');
         this.playingSong = false;
       },
       get(item) {
+        //  初始化数据,是重新初始化还是保存之前的数据状态
+        this.initialData(item);
         this.$http.get(api.getSong(item.id)).then((res) => {
           console.log('加载成功');
           if (res.data.data[0].url === null) {
@@ -384,8 +404,11 @@
           height:60px
           background-repeat:no-repeat
           background-position:center center
-        span:nth-child(1)
+        .love
           background-image:url(../../../static/img/collect.png)
+        .nolove
+          background-image:url(../../../static/img/collect_active.png)
+        span:nth-child(1)
           background-size:30px 30px
         span:nth-child(2)
           background-image:url(../../../static/img/down.png)
