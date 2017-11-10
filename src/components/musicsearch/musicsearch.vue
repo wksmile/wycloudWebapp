@@ -1,42 +1,43 @@
 <template>
-  <div>
     <transition-group name="fade">
-    <div class="search">
-      <div class="yuyin"></div>
-      <div class="input" @click="showlist">
-        <input type="text" value="" placeholder="搜索音乐、歌曲、电台" id="inputvalue" @keydown="search">
+      <div class="search-wrapper" v-show="showFlag" key="search">
+        <div class="search">
+          <div class="back" @click="hide">
+            <img src="../../../static/img/arrow-down.png" width="34" height="34">
+          </div>
+          <div class="input">
+            <input type="text" value="" placeholder="音乐、视屏、歌词、电台" id="inputvalue" @keydown="search" @input="isShowClear">
+            <span v-show="showClear" @click.stop="clearInput">
+              <img src="../../../static/img/x.png" width="25" height="25">
+            </span>
+          </div>
+        </div>
+        <div class="searchresult">
+          <ul class="list-ul">
+            <li v-for="(item, index) in list" @click="opensong(item)">
+              <div class="img" :class="{'active': number===index}">
+                {{index + 1}}
+              </div>
+              <div class="title border-1px" >
+                  <span class="music-name" :class="{'active': number===index}">
+                    {{item.name}}
+                  </span>
+                <p>
+                  <i v-show="item.sq"></i>
+                  <span :class="{'active': number===index}">{{item.artists[0].name}} - {{item.album.name}}</span>
+                </p>
+              </div>
+              <div class="menu border-1px" v-show="item.movie">
+                <div class="menu-img"></div>
+              </div>
+              <div class="menu border-1px">
+                <div class="menu-img"></div>
+              </div>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="music" @click="hidelist">
-        <span v-show="lshow">取消</span>
-        <img src="../../../static/img/search.png" alt="" v-show="!lshow" @click="openmusicsong">
-      </div>
-    </div>
-    <div class="searchresult" v-show="lshow">
-      <ul class="list-ul">
-        <li v-for="(item, index) in list" @click="opensong(item)">
-          <div class="img" :class="{'active': number===index}">
-            {{index + 1}}
-          </div>
-          <div class="title border-1px" >
-              <span class="music-name" :class="{'active': number===index}">
-                {{item.name}}
-              </span>
-            <p>
-              <i v-show="item.sq"></i>
-              <span :class="{'active': number===index}">{{item.artists[0].name}} - {{item.album.name}}</span>
-            </p>
-          </div>
-          <div class="menu border-1px" v-show="item.movie">
-            <div class="menu-img"></div>
-          </div>
-          <div class="menu border-1px">
-            <div class="menu-img"></div>
-          </div>
-        </li>
-      </ul>
-    </div>
     </transition-group>
-  </div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -45,16 +46,21 @@ export default{
     return {
       list: [],
       number: -1,
-      lshow: false     //  true表示搜索页面，false表示显示页面
+      showFlag: false,
+      showClear: false    //  是否显示清除所有输入的X键
     };
   },
   methods: {
-    showlist() {
-      this.lshow = true;
+    hide () {
+      this.showFlag = false;
     },
-    hidelist() {
+    show () {
+      this.showFlag = true;
+    },
+    clearInput () {
       document.getElementById('inputvalue').value = '';
-      this.lshow = false;
+      console.log('inputvalue');
+      this.showClear = false;
     },
     openmusicsong() {
       var obj = null;
@@ -62,18 +68,27 @@ export default{
     },
     opensong(item) {
       if (item) {
-
+        var obj = {
+          id: item.id,
+          migUrl: item.album.picUrl,
+          name: item.name,
+          songname: item.artists[0].name,
+          audiosrc: item.mp3Url
+        };
       } else {
         item = null;
       }
-      var obj = {
-        id: item.id,
-        migUrl: item.album.picUrl,
-        name: item.name,
-        songname: item.artists[0].name,
-        audiosrc: item.mp3Url
-      };
-      this.$emit('musicsearch', obj);
+      this.$emit('openSong', obj);
+    },
+    isShowClear () {
+      var name = document.getElementById('inputvalue').value;
+      if (!this.showClear) {
+        this.showClear = true;
+      }
+      if (!name) {
+        this.showClear = false;
+      }
+      console.log('shuchuvalue---');
     },
     search() {
       var name = document.getElementById('inputvalue').value;
@@ -90,6 +105,7 @@ export default{
           });
         }
       });
+      console.log('歌曲搜索的结果', this.list);
     }
   }
 };
@@ -97,31 +113,50 @@ export default{
 
 <style lang="stylus" rel="stylesheet/stylus">
   @import "../../common/stylus/mixin.styl";
+.search-wrapper
+  position : fixed;
+  z-index : 100
+  width : 100%;
+  top: 0;
+  bottom: 45px;
+  left: 0;
+  &.fade-enter-active, &.fade-leave-active
+    transition: all 0.1s linear
+    transform translate3d(0, 0, 0)
+  &.fade-enter, &.fade-leave-active
+    opacity: 0
+    transform translate3d(0, 80%, 0)
   .search
     background:#d43c33
     height:46px
     display :flex
-    &.fade-enter-active, &.fade-leave-active
-      transition: all 0.2s linear
-      transform translate3d(0, 0, 0)
-    &.fade-enter, &.fade-leave-active
-      opacity: 0
-      transform translate3d(100%, 0, 0)
-    .yuyin
-      flex-basis:40px
-      background:url(../../../static/img/menu1.png) no-repeat;
-      background-position:center center
-      background-size: 32px 32px
+    align-items : center
+    .back
+      height : 30px
+      flex-basis:30px
+      display: inline-block
+      margin: 0 5px
     .input
       flex:1
+      position : relative
+      span
+        position : absolute
+        right: 5%
       input
-        width:80%
+        width:88%
         height:30px
-        border-radius:5px
-        margin-top:8px
-        color:#c6c7c9
-        font-size:12px
-        padding-left:60px
+        color: white
+        font-size:14px
+        background : none
+        border-bottom: 1px solid white
+        padding-right : 10%
+        outline : none
+        &::-moz-placeholder
+          color: #0028d4
+        &:-ms-input-placeholder
+          color: white
+        &::-webkit-input-placeholder
+          color: rgba(201,193,187,0.51)
     .music
       flex-basis: 40px
       text-align:center

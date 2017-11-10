@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 100%; height: 100%">
+  <div class="out-wrapper">
     <div class="mv-wrapper" ref="mvWrapper">
       <div class="movie">
         <ul class="list-ul">
@@ -32,7 +32,7 @@
         </ul>
       </div>
     </div>
-    <mv-share ref="mvshare"></mv-share>
+    <mv-share :images="images" :others="others" ref="mvshare"></mv-share>
   </div>
 </template>
 
@@ -61,6 +61,70 @@
       //  获取数据
       this.getMvList(9);
       console.log('wozhixingl---------');
+    },
+    computed: {
+      images () {
+        let basicUrl = '../../../static/img/';
+        return [
+          {
+            url: basicUrl + 'wyyyy.png',
+            text: '云音乐动态'
+          },
+          {
+            url: basicUrl + 'wxpyq.png',
+            text: '微信朋友圈'
+          },
+          {
+            url: basicUrl + 'wyyyy.png',
+            text: '云音乐动态'
+          },
+          {
+            url: basicUrl + 'wxhy.png',
+            text: '微信好友'
+          },
+          {
+            url: basicUrl + 'qqkj.png',
+            text: 'QQ空间'
+          },
+          {
+            url: basicUrl + 'qqhy.png',
+            text: 'QQ好友'
+          },
+          {
+            url: basicUrl + 'wb.png',
+            text: '微博'
+          },
+          {
+            url: basicUrl + 'sx.png',
+            text: '私信'
+          },
+          {
+            url: basicUrl + 'fzlj.png',
+            text: '复制链接'
+          },
+          {
+            url: basicUrl + 'yxpyq.png',
+            text: '易信朋友圈'
+          },
+          {
+            url: basicUrl + 'yxhy.png',
+            text: '易信好友'
+          }
+        ];
+      },
+      others () {
+        let basicUrl = '../../../static/img/';
+        return [
+          {
+            url: basicUrl + 'collectmv.png',
+            text: '收藏'
+          },
+          {
+            url: basicUrl + 'nointrinest.png',
+            text: '不感兴趣'
+          }
+        ];
+      }
     },
     methods: {
       showShare (index) {
@@ -155,14 +219,19 @@
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus" scoped>
+.out-wrapper
+  margin: 87px 0 45px 0;
+  width: 100%;
+  height: 100%
   .mv-wrapper
     width: 100%;
     position : absolute;
     top: 87px;
     bottom : 45px;
     overflow: hidden;
-    background:#fff
+    background:#fff;
     .list-ul
+      position : relative;
       margin : 0;
       padding : 0;
       list-style : none;
@@ -189,7 +258,6 @@
             float : left;
             text-align: left;
             white-space : nowrap;
-            overflow : hidden;
             text-overflow : ellipsis;
             color: black;
             font-size : 14px;

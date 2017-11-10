@@ -8,13 +8,25 @@
           </li>
         </ul>
         <div class="music-detail">
-          <music-list listName="创建的歌单" :musicList="collectMusic" v-on:openMenu="openmenuTotal" v-on:initialScroll="_initialScroll"></music-list>
-          <music-list listName="收藏的歌单" :musicList="[]" v-on:initialScroll="_initialScroll"></music-list>
+          <music-list listName="创建的歌单"
+                      :bottomList="createdMusicList"
+                      :musicList="collectMusic"
+                      v-on:showBottomList="showBottom"
+                      v-on:openMenu="openmenuTotal"
+                      v-on:initialScroll="_initialScroll">
+          </music-list>
+          <music-list listName="收藏的歌单"
+                      :bottomList="collectMusicList"
+                      :musicList="[]"
+                      v-on:showBottomList="showBottom"
+                      v-on:initialScroll="_initialScroll">
+          </music-list>
         </div>
       </div>
     </div>
     <music-menu ref="musicmenu" v-on:openmusicsong="show"></music-menu>
     <music-song ref="musicsong"></music-song>
+    <BottomMenu ref="bottommenu"></BottomMenu>
   </div>
 </template>
 
@@ -23,6 +35,7 @@
   import BScroll from 'better-scroll';
   import MusicMenu from './Musicmenu/Musicmenu.vue';
   import MusicSong from './Musicsong/Musicsong.vue';
+  import BottomMenu from './BottomMenu';
   import api from '../api';
   import MusicList from './listDown';
 
@@ -56,7 +69,29 @@
             num: 4
           }
         ],
-        albumlist: []
+        albumlist: [],
+        createdMusicList: {
+          text: '创建的歌单',
+          list: [
+            {
+              url: '../../../static/img/addMusic.png',
+              text: '创建新歌单'
+            },
+            {
+              url: '../../../static/img/manage.png',
+              text: '歌单管理'
+            }
+          ]
+        },
+        collectMusicList: {
+          text: '收藏的歌单',
+          list: [
+            {
+              url: '../../../static/img/manage.png',
+              text: '歌单管理'
+            }
+          ]
+        }
       };
     },
     mounted () {
@@ -71,6 +106,10 @@
       ])
     },
     methods: {
+        // 展示底部菜单列表 该list实际为createdMusicList
+      showBottom (list) {
+        this.$refs.bottommenu.show(list);
+      },
       openmenuTotal: function (item) {
           // item为state中collectMusic中的某一项
         this.$refs.musicmenu.show();
@@ -103,7 +142,8 @@
     components: {
       MusicList,
       MusicMenu,
-      MusicSong
+      MusicSong,
+      BottomMenu
     }
   };
 </script>

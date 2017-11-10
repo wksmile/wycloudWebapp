@@ -10,7 +10,7 @@
             {{song.name}}-
             {{songname}}
           </div>
-          <div class="setting" >
+          <div class="setting" @click="showShare">
             <img src="../../../static/img/list-1.png" alt="" width=24 height=24>
           </div>
         </div>
@@ -27,7 +27,7 @@
             <span v-bind:class="[isLove ? 'nolove' : 'love']" @click="collect"></span>
             <span></span>
             <span></span>
-            <span></span>
+            <span @click="showBottomMenu"></span>
           </div>
           <div class="progress">
             <progressslider :mwidth="mwidth" @change="setTime"></progressslider>
@@ -82,6 +82,8 @@
           </div>
         </transition>
       </div>
+      <bottom-menu ref="buttommenu"></bottom-menu>
+      <mv-share :images="others" :others="images" ref="mvshare"></mv-share>
     </div>
   </transition-group>
 </template>
@@ -92,6 +94,8 @@
   import {changeTime} from '../../common/js/changeTime';
   import BScroll from 'better-scroll';
   import api from '../../api';
+  import BottomMenu from '../BottomMenu';
+  import MvShare from '../MvShare';
   export default {
     data() {
       return {
@@ -120,10 +124,95 @@
     },
     computed: {
       ...mapState([
-        'isCurrentsong', 'playing', 'ischangeplaying', 'collectMusic'
+        'isCurrentsong', 'playing', 'ischangeplaying', 'collectMusic', 'currentMusic'
       ]),
       musicId () {
         return this.$store.getters.collectMusicId;
+      },
+      listBottom () {
+          let list = {};
+          if (this.currentMusic) {
+            list.text = '歌曲: ' + this.currentMusic.songname;
+            let currentlist = [];
+            let current = {};
+            //  收藏歌单
+            current.url = '../../../static/img/addMusic.png';
+            current.text = '收藏到歌单';
+            currentlist.push(Object.assign({}, current));
+
+            //  增加歌手选项
+            current.url = '../../../static/img/wdsc.png';
+            current.text = '歌手: ' + this.currentMusic.name;
+            currentlist.push(Object.assign({}, current));
+            //  音质
+            current.url = '../../../static/img/wddt.png';
+            current.text = '音质：自动选择';
+            currentlist.push(Object.assign({}, current));
+            //  相似推荐
+            current.url = '../../../static/img/bdyy.png';
+            current.text = '音质：自动选择';
+            currentlist.push(Object.assign({}, current));
+            //  定时停止播放
+            current.url = '../../../static/img/zjbf.png';
+            current.text = '定时停止播放';
+            currentlist.push(Object.assign({}, current));
+            //  打开驾驶模式
+            current.url = '../../../static/img/js.png';
+            current.text = '打开驾驶模式';
+            currentlist.push(Object.assign({}, current));
+            list.list = currentlist;
+          }
+          return list;
+      },
+      images () {
+        let basicUrl = '../../../static/img/';
+        return [
+          {
+            url: basicUrl + 'wxpyq.png',
+            text: '微信朋友圈'
+          },
+          {
+            url: basicUrl + 'wxhy.png',
+            text: '微信好友'
+          },
+          {
+            url: basicUrl + 'qqkj.png',
+            text: 'QQ空间'
+          },
+          {
+            url: basicUrl + 'qqhy.png',
+            text: 'QQ好友'
+          },
+          {
+            url: basicUrl + 'wb.png',
+            text: '微博'
+          },
+          {
+            url: basicUrl + 'fzlj.png',
+            text: '复制链接'
+          },
+          {
+            url: basicUrl + 'yxpyq.png',
+            text: '易信朋友圈'
+          },
+          {
+            url: basicUrl + 'yxhy.png',
+            text: '易信好友'
+          }
+        ];
+      },
+      others () {
+        let basicUrl = '../../../static/img/';
+        return [
+          {
+            url: basicUrl + 'wyyyy.png',
+            text: '云音乐动态'
+          },
+          {
+            url: basicUrl + 'sx.png',
+            text: '私信'
+          }
+        ];
       }
     },
     watch: {
@@ -144,6 +233,14 @@
       ...mapMutations([
         'SAVE_CURRENT_MUSIC', 'CHANGE_ISCURRENTSONG', 'CHANGE_PLAYING', 'CHANGE_ISCHANGEPLAYING', 'ADD_COLLECT_MUSIC', 'DELETE_COLLECT_MUSIC'
       ]),
+      //  显示底部分享的菜单
+      showShare () {
+        this.$refs.mvshare.show();
+      },
+      //  点击菜单按钮显示底部的菜单
+      showBottomMenu () {
+          this.$refs.buttommenu.show(this.listBottom);
+      },
       //  重新加载歌曲部分数据需要更新
       initialData (item) {
         this.isLove = this.collectMusic[0]['collectMusicId'].indexOf(item.id) > 0;
@@ -223,7 +320,6 @@
         this.SAVE_CURRENT_MUSIC(item);
       },
       playsong(index, item) {
-        console.log(index);
         this.hidelist();
         this.index = index;
         console.log('----+++', item);
@@ -231,7 +327,7 @@
         this.albumPic = item.migUrl;
         this.songname = item.songname;
         this.name = item.name;
-        if (item.audiosrc !== undefined) {
+        if (item.audiosrc) {
           this.audiourl = item.audiosrc;
           this.$nextTick(() => {
             this.canPlaySong();
@@ -265,6 +361,7 @@
             this.$nextTick(() => {
               this.canPlaySong();
             });
+            console.log('加载成功----', this.audiourl);
           }
         }).catch((error) => {
           console.log('加载歌曲信息出错:' + error);
@@ -308,7 +405,9 @@
       }
     },
     components: {
-      Progressslider
+      Progressslider,
+      BottomMenu,
+      MvShare
     }
   };
 </script>
@@ -319,11 +418,12 @@
     position:absolute
     top:0
     left:0
+    bottom : 0
     width:100%
     height:100%
-    min-height: 667px
-    z-index:100
+    z-index:120
     background:#ceacac
+    overflow: hidden
     &.fade-enter-active, &.fade-leave-active
       transition: all 0.2s linear
       transform translate3d(0, 0, 0)

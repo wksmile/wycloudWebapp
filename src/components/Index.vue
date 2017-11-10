@@ -8,10 +8,11 @@
       </ul>
       <div class="bar" :class="Classmove"></div>
     </header>
-    <transition>
-      <two-music v-show="tagPage === 1"></two-music>           <!--音乐-->
-      <two-movie v-if="tagPage === 2"></two-movie>            <!--视屏-->
-      <two-broadcast v-show="tagPage === 3"></two-broadcast>     <!--电台-->
+    <transition name="componeent-fade" mode="out-in">
+      <component v-bind:is="view"></component>
+      <!--<two-music v-show="tagPage === 1"></two-music>           &lt;!&ndash;音乐&ndash;&gt;-->
+      <!--<two-movie v-show="tagPage === 2"></two-movie>            &lt;!&ndash;视屏&ndash;&gt;-->
+      <!--<two-broadcast v-show="tagPage === 3"></two-broadcast>     &lt;!&ndash;电台&ndash;&gt;-->
     </transition>
     <!--<musicmenu ref="musicmenu" v-on:openmusicsong="show"></musicmenu>-->
     <!--<Musicsong ref="musicsong"></Musicsong>-->
@@ -27,7 +28,8 @@
     data() {
       return {
         tagPage: 1,    //  表示音乐，2表示视屏，3表示电台
-        Classmove: 'classmove0'
+        Classmove: 'classmove0',
+        view: 'TwoMusic'
       };
     },
     created() {
@@ -40,12 +42,15 @@
         if (val === '/') {
           this.Classmove = 'classmove0';
           this.tagPage = 1;
+          this.view = 'TwoMusic';
         } else if (val === '/music') {
           this.Classmove = 'classmove1';
           this.tagPage = 2;
+          this.view = 'TwoMovie';
         } else if (val === '/station') {
           this.Classmove = 'classmove2';
           this.tagPage = 3;
+          this.view = 'TwoBroadcast';
         }
       }
     },

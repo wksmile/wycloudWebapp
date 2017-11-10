@@ -4,7 +4,7 @@
       <div class="list-menu" @click="toggleShow">
         <span class="list-arrow"><img v-bind:class="[flagShow ? 'img90rotate' : 'imgr90rotate']" src="../../../static/img/htb_right.png" width="15" height="15"></span>
         <span class="list-text"><span>{{listName}}</span><span>({{musicListNum}})</span></span>
-        <span class="list-setting"><img src="../../../static/img/setting.png" width="20" height="20"></span>
+        <span class="list-setting"><img src="../../../static/img/setting.png" width="20" height="20" @click.stop="showBottomMenu(bottomList)"></span>
       </div>
       <transition name="slid-doen">
         <div class="list-detail" v-show="flagShow">
@@ -12,7 +12,7 @@
             <li class="list-item" v-for="item in musicList" @click="emitMenuTotal(item)">
               <span class="musicImg"><img :src="imageUrl(item)" height="50" width="50"></span>
               <div class="text">
-                <span class="musicText"><p>{{item.collectName}}</p><p>{{item.collectList.length}}首</p></span><span class="musicShare"><img src="../../../static/img/videomenu.png" width="20" height="20"></span>
+                <span class="musicText"><p>{{item.collectName}}</p><p>{{item.collectList.length}}首</p></span><span class="musicShare"><img src="../../../static/img/videomenu.png" width="20" height="20" @click.stop="showBottomMenu(shareList)"></span>
               </div>
             </li>
           </ul>
@@ -26,10 +26,27 @@
   export default {
     data () {
       return {
-        flagShow: false
+        flagShow: false,
+        shareList: {
+          text: '歌单： 我喜欢的音乐',
+          list: [
+            {
+              url: '../../../../static/img/xzgl.png',
+              text: '下载'
+            },
+            {
+              url: '../../../../static/img/share.png',
+              text: '分享'
+            }
+          ]
+        }
       };
     },
     props: {
+      bottomList: {
+        type: Object,
+        required: true
+      },
       musicList: {    //  对应state中collectMusic数组
         type: Array,
         required: true
@@ -45,7 +62,11 @@
       }
     },
     methods: {
-        //  点击下拉列表中的某一项的触发父组件打开歌单列表的函数
+        //  显示下拉的菜单页面
+      showBottomMenu (list) {
+          this.$emit('showBottomList', list);
+      },
+      //  点击下拉列表中的某一项的触发父组件打开歌单列表的函数
       emitMenuTotal (item) {     //   item为state中collectMusic数组的某一项
           this.$emit('openMenu', item);
       },

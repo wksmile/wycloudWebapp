@@ -4,8 +4,8 @@
       <div class="con">
         <div class="content">
           <p>分享:</p>
-          <div class="share-content" ref="shareContent">
-            <div>
+          <div class="share-content">
+            <div class="share-content-wrapper" ref="shareContent">
               <ul class="share-list">
                 <li v-for="item in images">
                   <img :src="item.url">
@@ -17,7 +17,7 @@
         </div>
         <div class="content">
           <p>其他:</p>
-          <div class="share-content" ref="shareContent">
+          <div class="share-content">
             <div>
               <ul class="share-list">
                 <li v-for="other in others">
@@ -45,72 +45,18 @@
       mounted () {
         this._initScroll();
       },
-      computed: {
-        images () {
-          let basicUrl = '../../../static/img/';
-          return [
-            {
-              url: basicUrl + 'wyyyy.png',
-              text: '云音乐动态'
-            },
-            {
-              url: basicUrl + 'wxpyq.png',
-              text: '微信朋友圈'
-            },
-            {
-              url: basicUrl + 'wyyyy.png',
-              text: '云音乐动态'
-            },
-            {
-              url: basicUrl + 'wxhy.png',
-              text: '微信好友'
-            },
-            {
-              url: basicUrl + 'qqkj.png',
-              text: 'QQ空间'
-            },
-            {
-              url: basicUrl + 'qqhy.png',
-              text: 'QQ好友'
-            },
-            {
-              url: basicUrl + 'wb.png',
-              text: '微博'
-            },
-            {
-              url: basicUrl + 'sx.png',
-              text: '私信'
-            },
-            {
-              url: basicUrl + 'fzlj.png',
-              text: '复制链接'
-            },
-            {
-              url: basicUrl + 'yxpyq.png',
-              text: '易信朋友圈'
-            },
-            {
-              url: basicUrl + 'yxhy.png',
-              text: '易信好友'
-            }
-          ];
+      props: {
+        images: {
+          type: Array,
+          required: true
         },
-        others () {
-          let basicUrl = '../../../static/img/';
-          return [
-            {
-              url: basicUrl + 'collectmv.png',
-              text: '收藏'
-            },
-            {
-              url: basicUrl + 'nointrinest.png',
-              text: '不感兴趣'
-            }
-          ];
+        others: {
+            type: Array,
+            required: true
         }
       },
       methods: {
-        show (index) {
+        show () {
           this.showFlag = true;
           this.$nextTick(() => {
             this._initScroll();
@@ -141,14 +87,15 @@
     position: fixed;
     top: 0
     left: 0
+    bottom : 0
     width:100%
     height:100%
-    min-height: 667px
-    z-index:5
+    z-index: 101
     background: rgba(0, 0, 0, 0.4);
     .con
       position : absolute;
-      bottom : 45px;
+      z-index: 6;
+      bottom : 0;
       width : 100%;
       height : 260px;
       padding-bottom: 10px;
@@ -164,8 +111,8 @@
           color: #7e8c8d;
         .share-content
           height : 80px;
+          width : 100%;
           .share-list
-            position : relative;
             margin: 0;
             padding: 0;
             list-style: none;

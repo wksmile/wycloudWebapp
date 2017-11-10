@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="search">
-      <div class="yuyin"></div>         <!--左侧图标-->
+      <div class="yuyin" @click="showSetting"></div>         <!--左侧图标-->
       <div class="top-header">          <!--最上面头部三个标志-->
         <router-link to="/music">
           <span v-show="tagPage === 1"><img src="../../../static/img/music1.png"></span>
@@ -17,62 +17,44 @@
         </router-link>
       </div>
       <div class="music">   <!--右侧图标 -->
-        <span v-show="lshow" @click="hidelist">取消</span>
         <img src="../../../static/img/search.png" alt="" v-show="!lshow" @click="showlist">
       </div>
     </div>
     <transition name="router-slid" mode="out-in">
       <router-view></router-view>
     </transition>
-    <div class="searchresult" v-show="lshow">   <!--点击显示的搜索页面-->
-      <ul class="list-ul">
-        <li v-for="(item, index) in list" @click="opensong(item)">
-          <div class="img" :class="{'active': number===index}">
-            {{index + 1}}
-          </div>
-          <div class="title border-1px" >
-              <span class="music-name" :class="{'active': number===index}">
-                {{item.name}}
-              </span>
-            <p>
-              <i v-show="item.sq"></i>
-              <span :class="{'active': number===index}">{{item.artists[0].name}} - {{item.album.name}}</span>
-            </p>
-          </div>
-          <div class="menu border-1px" v-show="item.movie">
-            <div class="menu-img"></div>
-          </div>
-          <div class="menu border-1px">
-            <div class="menu-img"></div>
-          </div>
-        </li>
-      </ul>
-    </div>
     <!-- 底部歌曲信息 -->
     <transition name="slid-down">
-      <div class="musicbottom" v-show="isCurrentsong">
+      <div class="musicbottom" v-show="isCurrentsong" @click="openCurrentMusic(currentMusic)">
         <div class="musicbottomcontain">
           <span><img :src="currentMusic.migUrl"></span>
           <span class="name"><span class="songname">{{currentMusic.songname}}</span><span class="singername">{{currentMusic.name}}</span></span>
-          <span @click="togglePlay" :class="{'isplay':playing,'noplay':!playing}"></span>
-          <span class="collect"><img src="../../../static/img/collect.png"></span>
+          <span @click.stop="togglePlay" :class="{'isplay':playing,'noplay':!playing}"></span>
+          <span class="collect" @click.stop="collect" v-bind:class="[isLove ? 'nolove' : 'love']"></span>
         </div>
       </div>
     </transition>
+    <!-- 点击底部打开当前歌曲 -->
+    <music-song ref="musicsong"></music-song>
+    <music-search ref="musicsearch" v-on:openSong="openCurrentMusic"></music-search>
+    <setting-menu ref="settingmenu"></setting-menu>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import { mapState, mapMutations } from 'vuex';
+  import MusicSong from '../Musicsong/Musicsong.vue';
+  import MusicSearch from '../musicsearch/musicsearch.vue';
+  import SettingMenu from '../SettingMenu';
 
   export default{
     data() {
       return {
-//      playing: false,   //  是否处于播放状态
         tagPage: 2,      //  表示当前是在哪一个页面  1表示头部第一个，2表示第二个 3表示第三个
-        list: [],
+        list: [],         //  搜索的结果
         number: -1,
-        lshow: false     //  true表示显示搜索页面，false表示显示页面
+        lshow: false,     //  true表示显示搜索页面，false表示显示页面
+        isLove: false     //  是否收藏了该歌曲
       };
     },
     computed: mapState([
@@ -80,10 +62,15 @@
     ]),
     methods: {
       ...mapMutations([
-        'CHANGE_PLAYING'
+        'CHANGE_PLAYING', 'ADD_COLLECT_MUSIC', 'DELETE_COLLECT_MUSIC'
       ]),
+      // 显示设置的页面
+      showSetting () {
+          this.$refs.settingmenu.show();
+      },
       showlist() {      // 显示搜索页面
-        this.lshow = true;
+//        this.lshow = true;
+        this.$refs.musicsearch.show();
       },
       hidelist() {      //  隐藏搜索页面
         this.lshow = false;
@@ -107,6 +94,23 @@
 //          this.playing = false;
         }
       },
+      //  收藏当前歌曲
+      collect () {
+          if (this.currentMusic) {
+              this.isLove = !this.isLove;
+              if (this.isLove) {
+                this.ADD_COLLECT_MUSIC('我喜欢的音乐');
+              } else {
+                this.DELETE_COLLECT_MUSIC('我喜欢的音乐');
+              }
+          } else {
+              console.log('当前不存在在歌曲，清先播放一首');
+          }
+      },
+      openCurrentMusic (item) {
+        console.log('歌曲搜索的item', item);
+         this.$refs.musicsong.show(item);
+      },
       opensong(item) {
         if (item) {
 
@@ -122,6 +126,11 @@
         };
         this.$emit('musicsearch', obj);
       }
+    },
+    components: {
+      MusicSong,
+      MusicSearch,
+      SettingMenu
     }
   };
 </script>
@@ -248,6 +257,10 @@
         height: 45px
         background-repeat: no-repeat
         background-position: center center
+        &.love
+          background-image:url(../../../static/img/collect.png)
+        &.nolove
+          background-image:url(../../../static/img/collect_active.png)
         &.isplay
           display: inline-block;
           margin: 5px 10px;
