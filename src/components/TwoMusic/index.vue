@@ -5,28 +5,28 @@
         <div class="swipe-wrapper">
           <swipe class="my-swipe">
             <swipe-item class="slide1">
-              <img src="../../assets/1.png" alt="">
+              <img src="../../assets/1.jpg" alt="">
             </swipe-item>
             <swipe-item class="slide2">
-              <img src="../../assets/2.png" alt="">
+              <img src="../../assets/2.jpg" alt="">
             </swipe-item>
             <swipe-item class="slide3">
-              <img src="../../assets/3.png" alt="">
+              <img src="../../assets/3.jpg" alt="">
             </swipe-item>
             <swipe-item class="slide3">
-              <img src="../../assets/4.png" alt="">
+              <img src="../../assets/4.jpg" alt="">
             </swipe-item>
             <swipe-item class="slide3">
-              <img src="../../assets/5.png" alt="">
+              <img src="../../assets/5.jpg" alt="">
             </swipe-item>
             <swipe-item class="slide3">
-              <img src="../../assets/6.png" alt="">
+              <img src="../../assets/6.jpg" alt="">
             </swipe-item>
             <swipe-item class="slide3">
-              <img src="../../assets/7.png" alt="">
+              <img src="../../assets/7.jpg" alt="">
             </swipe-item>
             <swipe-item class="slide3">
-              <img src="../../assets/8.png" alt="">
+              <img src="../../assets/8.jpg" alt="">
             </swipe-item>
           </swipe>
         </div>

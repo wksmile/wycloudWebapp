@@ -1,7 +1,7 @@
 {
-  "name": "musiccloudWebapp",
+  "name": "wycloudWebapp",
   "version": "1.0.0",
-  "description": "musiccloudWebapp",
+  "description": "wycloudWebapp",
   "author": "qiufeng <461249104@qq.com>",
   "private": true,
   "scripts": {
